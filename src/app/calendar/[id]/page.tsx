@@ -1507,7 +1507,7 @@ export default function CalendarView() {
 
   const monthName = monthFormatter.format(currentDate);
   const daysInMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0).getDate();
-  const firstDay = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1).getDay();
+  const firstDay = (new Date(currentDate.getFullYear(), currentDate.getMonth(), 1).getDay() + 6) % 7;
   const calendarStartMonth = new Date(fromDateKey(calendar.startDate).getFullYear(), fromDateKey(calendar.startDate).getMonth(), 1);
   const calendarEndMonth = new Date(fromDateKey(calendar.endDate).getFullYear(), fromDateKey(calendar.endDate).getMonth(), 1);
   const currentMonthStart = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
@@ -1780,7 +1780,7 @@ export default function CalendarView() {
               </div>
 
               <div className="grid grid-cols-7 gap-1 text-center text-[11px] font-semibold uppercase tracking-[0.08em] text-slate-500">
-                {['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'].map((day) => (
+                {['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'].map((day) => (
                   <div key={day} className="py-2">
                     {day}
                   </div>
