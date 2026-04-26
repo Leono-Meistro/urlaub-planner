@@ -15,3 +15,4 @@ services:
 
 volumes:
   urlaub_data:
+    name: plan_urlaub_data
