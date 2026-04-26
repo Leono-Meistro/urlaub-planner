@@ -338,6 +338,23 @@ input[type="date"].app-input {
   color: #64748b;
 }
 
+.edit-calendar-grid,
+.edit-calendar-side {
+  display: grid;
+  gap: 1rem;
+}
+
+.account-settings-grid {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.calendar-selection-card,
+.calendar-month-panel,
+.calendar-results-card {
+  min-width: 0;
+}
+
 .touch-target {
   min-height: 44px;
 }
@@ -345,6 +362,109 @@ input[type="date"].app-input {
 @media (min-width: 640px) {
   .app-shell {
     padding-inline: 1rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  main {
+    padding-block: 2.5rem;
+  }
+
+  .app-shell {
+    max-width: 82rem;
+    padding-inline: 1.5rem;
+  }
+
+  .app-card {
+    border-radius: 1.25rem;
+  }
+
+  .app-panel {
+    border-radius: 1rem;
+  }
+
+  .app-header {
+    min-height: 4.5rem;
+    gap: 1.25rem;
+    padding: 0.7rem 0.8rem;
+  }
+
+  .app-header-main {
+    gap: 0.75rem;
+  }
+
+  .app-header-brand {
+    padding-inline: 0.45rem;
+  }
+
+  .app-header-logo {
+    height: 2.55rem;
+    width: 2.55rem;
+  }
+
+  .app-header-title {
+    font-size: 1rem;
+  }
+
+  .app-header-subtitle {
+    font-size: 0.84rem;
+  }
+
+  .home-card-layout,
+  .dashboard-hero-layout,
+  .create-calendar-layout {
+    gap: 2rem;
+    grid-template-columns: minmax(0, 1fr) minmax(18rem, 22rem);
+  }
+
+  .dashboard-hero,
+  .desktop-form-card {
+    padding: 2rem;
+  }
+
+  .dashboard-calendar-grid {
+    gap: 1.25rem;
+  }
+
+  .edit-calendar-grid {
+    grid-template-columns: minmax(0, 1fr) minmax(20rem, 24rem);
+    align-items: start;
+    gap: 1.5rem;
+  }
+
+  .edit-calendar-side,
+  .account-settings-grid {
+    gap: 1.5rem;
+  }
+
+  .account-settings-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+  }
+
+  .calendar-selection-card {
+    max-width: 58rem;
+    margin-inline: auto;
+    padding: 1.5rem;
+  }
+
+  .calendar-month-panel {
+    max-width: 48rem;
+    margin-inline: auto;
+  }
+
+  .calendar-results-card {
+    padding: 1.5rem;
+  }
+}
+
+@media (min-width: 1280px) {
+  .app-shell {
+    max-width: 88rem;
+  }
+
+  .dashboard-calendar-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 

@@ -118,8 +118,8 @@ export default function Dashboard() {
           )}
         />
 
-        <section className="app-card px-5 py-6 sm:px-8 sm:py-8">
-          <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_18rem] lg:items-start">
+        <section className="dashboard-hero app-card px-5 py-6 sm:px-8 sm:py-8">
+          <div className="dashboard-hero-layout grid gap-5 lg:grid-cols-[minmax(0,1fr)_18rem] lg:items-start">
             <div className="space-y-4">
               <div className="flex flex-wrap items-center gap-3">
                 <h1 className="text-2xl font-semibold tracking-tight text-slate-950 sm:text-3xl">
@@ -181,7 +181,7 @@ export default function Dashboard() {
               <p className="text-sm text-slate-500">{calendars.length} Einträge</p>
             </div>
 
-            <div className="grid gap-4 lg:grid-cols-2">
+            <div className="dashboard-calendar-grid grid gap-4 lg:grid-cols-2">
               {calendars.map((calendar) => (
                 <Link
                   key={calendar.id}

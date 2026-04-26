@@ -2034,7 +2034,7 @@ export default function CalendarView() {
           </form>
         )}
 
-        <section className="app-card px-4 py-5 sm:px-6">
+        <section className="calendar-results-card app-card px-4 py-5 sm:px-6">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
             <div>
               <p className="app-kicker">Alle Teilnehmenden</p>

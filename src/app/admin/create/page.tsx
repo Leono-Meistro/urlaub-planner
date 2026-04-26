@@ -131,13 +131,13 @@ export default function CreateCalendar() {
             </Link>
           </section>
         ) : (
-          <form onSubmit={handleSubmit} className="app-card px-4 py-5 sm:px-6 sm:py-6">
+          <form onSubmit={handleSubmit} className="desktop-form-card app-card px-4 py-5 sm:px-6 sm:py-6">
             <div className="mb-5">
               <p className="app-kicker">Neue Planung</p>
               <h1 className="mt-2 text-2xl font-semibold text-slate-950">Urlaub anlegen</h1>
             </div>
 
-            <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_17rem]">
+            <div className="create-calendar-layout grid gap-4 lg:grid-cols-[minmax(0,1fr)_17rem]">
               <div className="space-y-4">
                 <div className="space-y-2">
                   <label htmlFor="calendar-title" className="flex items-center gap-2 text-sm font-medium text-slate-800">

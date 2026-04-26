@@ -161,113 +161,115 @@ export default function AccountPage() {
         {message && <Notice tone="success">{message}</Notice>}
         {error && <Notice tone="error">{error}</Notice>}
 
-        <section className="app-card px-5 py-6 sm:px-8 sm:py-8">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-slate-900 text-white">
-              <UserRound size={18} />
-            </div>
-            <div>
-              <h1 className="text-2xl font-semibold tracking-tight text-slate-950 sm:text-3xl">Mein Konto</h1>
-              <p className="text-sm text-slate-600">Eigene Daten und Passwort verwalten</p>
-            </div>
-          </div>
-
-          <form onSubmit={handleSaveProfile} className="mt-6 space-y-4">
-            <div className="space-y-2">
-              <label htmlFor="account-email" className="text-sm font-medium text-slate-800">
-                E-Mail
-              </label>
-              <input
-                id="account-email"
-                type="email"
-                value={profileForm.email}
-                onChange={(e) => setProfileForm((prev) => ({ ...prev, email: e.target.value }))}
-                className="app-input"
-                disabled={savingProfile || savingPassword}
-              />
+        <div className="account-settings-grid">
+          <section className="app-card px-5 py-6 sm:px-8 sm:py-8">
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-slate-900 text-white">
+                <UserRound size={18} />
+              </div>
+              <div>
+                <h1 className="text-2xl font-semibold tracking-tight text-slate-950 sm:text-3xl">Mein Konto</h1>
+                <p className="text-sm text-slate-600">Eigene Daten und Passwort verwalten</p>
+              </div>
             </div>
 
-            <div className="space-y-2">
-              <label htmlFor="account-username" className="text-sm font-medium text-slate-800">
-                Name
-              </label>
-              <input
-                id="account-username"
-                type="text"
-                value={profileForm.username}
-                onChange={(e) => setProfileForm((prev) => ({ ...prev, username: e.target.value }))}
-                className="app-input"
-                disabled={savingProfile || savingPassword}
-              />
+            <form onSubmit={handleSaveProfile} className="mt-6 space-y-4">
+              <div className="space-y-2">
+                <label htmlFor="account-email" className="text-sm font-medium text-slate-800">
+                  E-Mail
+                </label>
+                <input
+                  id="account-email"
+                  type="email"
+                  value={profileForm.email}
+                  onChange={(e) => setProfileForm((prev) => ({ ...prev, email: e.target.value }))}
+                  className="app-input"
+                  disabled={savingProfile || savingPassword}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label htmlFor="account-username" className="text-sm font-medium text-slate-800">
+                  Name
+                </label>
+                <input
+                  id="account-username"
+                  type="text"
+                  value={profileForm.username}
+                  onChange={(e) => setProfileForm((prev) => ({ ...prev, username: e.target.value }))}
+                  className="app-input"
+                  disabled={savingProfile || savingPassword}
+                />
+              </div>
+
+              <button type="submit" className="app-button" disabled={savingProfile || savingPassword}>
+                <Save size={18} />
+                {savingProfile ? 'Wird gespeichert...' : 'Profil speichern'}
+              </button>
+            </form>
+          </section>
+
+          <section className="app-card px-5 py-6 sm:px-8 sm:py-8">
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-slate-900 text-white">
+                <KeyRound size={18} />
+              </div>
+              <div>
+                <h2 className="text-xl font-semibold text-slate-950">Passwort ändern</h2>
+                <p className="text-sm text-slate-600">Altes Passwort einmal, neues Passwort zweimal eingeben</p>
+              </div>
             </div>
 
-            <button type="submit" className="app-button" disabled={savingProfile || savingPassword}>
-              <Save size={18} />
-              {savingProfile ? 'Wird gespeichert...' : 'Profil speichern'}
-            </button>
-          </form>
-        </section>
+            <form onSubmit={handleChangePassword} className="mt-6 space-y-4">
+              <div className="space-y-2">
+                <label htmlFor="old-password" className="text-sm font-medium text-slate-800">
+                  Altes Passwort
+                </label>
+                <input
+                  id="old-password"
+                  type="password"
+                  value={passwordForm.oldPassword}
+                  onChange={(e) => setPasswordForm((prev) => ({ ...prev, oldPassword: e.target.value }))}
+                  className="app-input"
+                  disabled={savingProfile || savingPassword}
+                />
+              </div>
 
-        <section className="app-card px-5 py-6 sm:px-8 sm:py-8">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-slate-900 text-white">
-              <KeyRound size={18} />
-            </div>
-            <div>
-              <h2 className="text-xl font-semibold text-slate-950">Passwort ändern</h2>
-              <p className="text-sm text-slate-600">Altes Passwort einmal, neues Passwort zweimal eingeben</p>
-            </div>
-          </div>
+              <div className="space-y-2">
+                <label htmlFor="new-password" className="text-sm font-medium text-slate-800">
+                  Neues Passwort
+                </label>
+                <input
+                  id="new-password"
+                  type="password"
+                  value={passwordForm.newPassword}
+                  onChange={(e) => setPasswordForm((prev) => ({ ...prev, newPassword: e.target.value }))}
+                  className="app-input"
+                  disabled={savingProfile || savingPassword}
+                />
+              </div>
 
-          <form onSubmit={handleChangePassword} className="mt-6 space-y-4">
-            <div className="space-y-2">
-              <label htmlFor="old-password" className="text-sm font-medium text-slate-800">
-                Altes Passwort
-              </label>
-              <input
-                id="old-password"
-                type="password"
-                value={passwordForm.oldPassword}
-                onChange={(e) => setPasswordForm((prev) => ({ ...prev, oldPassword: e.target.value }))}
-                className="app-input"
-                disabled={savingProfile || savingPassword}
-              />
-            </div>
+              <div className="space-y-2">
+                <label htmlFor="confirm-password" className="text-sm font-medium text-slate-800">
+                  Neues Passwort wiederholen
+                </label>
+                <input
+                  id="confirm-password"
+                  type="password"
+                  value={passwordForm.confirmPassword}
+                  onChange={(e) => setPasswordForm((prev) => ({ ...prev, confirmPassword: e.target.value }))}
+                  className="app-input"
+                  disabled={savingProfile || savingPassword}
+                />
+              </div>
 
-            <div className="space-y-2">
-              <label htmlFor="new-password" className="text-sm font-medium text-slate-800">
-                Neues Passwort
-              </label>
-              <input
-                id="new-password"
-                type="password"
-                value={passwordForm.newPassword}
-                onChange={(e) => setPasswordForm((prev) => ({ ...prev, newPassword: e.target.value }))}
-                className="app-input"
-                disabled={savingProfile || savingPassword}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label htmlFor="confirm-password" className="text-sm font-medium text-slate-800">
-                Neues Passwort wiederholen
-              </label>
-              <input
-                id="confirm-password"
-                type="password"
-                value={passwordForm.confirmPassword}
-                onChange={(e) => setPasswordForm((prev) => ({ ...prev, confirmPassword: e.target.value }))}
-                className="app-input"
-                disabled={savingProfile || savingPassword}
-              />
-            </div>
-
-            <button type="submit" className="app-button" disabled={savingProfile || savingPassword}>
-              <KeyRound size={18} />
-              {savingPassword ? 'Wird geändert...' : 'Passwort ändern'}
-            </button>
-          </form>
-        </section>
+              <button type="submit" className="app-button" disabled={savingProfile || savingPassword}>
+                <KeyRound size={18} />
+                {savingPassword ? 'Wird geändert...' : 'Passwort ändern'}
+              </button>
+            </form>
+          </section>
+        </div>
       </div>
     </main>
   );

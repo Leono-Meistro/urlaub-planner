@@ -32,6 +32,7 @@ interface User {
 }
 
 const MESSAGE_DISMISS_MS = 4500;
+const MIN_DURATION_OPTIONS = Array.from({ length: 30 }, (_, index) => index + 1);
 
 export default function EditCalendarPage() {
   const params = useParams();
@@ -291,7 +292,8 @@ export default function EditCalendarPage() {
       <div className="app-shell space-y-4">
         <AppHeader subtitle="Planung bearbeiten" backHref={`/calendar/${calendarId}`} backLabel="Zurück" />
 
-        <section className="app-card px-4 py-5 sm:px-6">
+        <div className="edit-calendar-grid">
+        <section className="desktop-form-card app-card px-4 py-5 sm:px-6">
           <h1 className="text-2xl font-semibold text-slate-950">{calendar.title}</h1>
           <p className="mt-1 text-sm text-slate-600">
             Admin-Code: <code className="font-mono font-medium text-slate-900">{calendar.adminCode}</code>
@@ -360,16 +362,19 @@ export default function EditCalendarPage() {
               <label htmlFor="minDuration" className="text-sm font-medium text-slate-800">
                 Mindestdauer (zusammenhängende Tage)
               </label>
-              <input
+              <select
                 id="minDuration"
-                type="number"
-                min="1"
-                max={dayCount > 0 ? dayCount : undefined}
                 value={minDurationDays}
-                onChange={(e) => setMinDurationDays(Math.max(1, parseInt(e.target.value) || 1))}
+                onChange={(e) => setMinDurationDays(Number(e.target.value))}
                 className="app-input mt-2"
                 disabled={saving}
-              />
+              >
+                {MIN_DURATION_OPTIONS.map((days) => (
+                  <option key={days} value={days}>
+                    {days} {days === 1 ? 'Tag' : 'Tage'}
+                  </option>
+                ))}
+              </select>
               {dayCount > 0 && (
                 <p className="mt-2 text-sm text-slate-500">
                   Zeitraum: {dayCount} Tage
@@ -386,6 +391,7 @@ export default function EditCalendarPage() {
           </form>
         </section>
 
+        <div className="edit-calendar-side">
         <section className="app-card px-4 py-5 sm:px-6">
           <h2 className="text-xl font-semibold text-slate-950">Links und Teilnehmer</h2>
 
@@ -492,6 +498,8 @@ export default function EditCalendarPage() {
             </div>
           </div>
         </section>
+        </div>
+        </div>
       </div>
     </main>
   );

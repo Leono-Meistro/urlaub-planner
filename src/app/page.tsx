@@ -77,7 +77,7 @@ export default function Home() {
         <AppHeader subtitle="Urlaube einfach abstimmen" />
 
         <section className="app-card px-4 py-5 sm:px-6 sm:py-6">
-          <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_18rem] lg:items-start">
+          <div className="home-card-layout grid gap-5 lg:grid-cols-[minmax(0,1fr)_18rem] lg:items-start">
             <div className="space-y-4">
               <p className="app-kicker">Direkt loslegen</p>
               <h1 className="text-2xl font-semibold tracking-tight text-slate-950 sm:text-3xl">
@@ -141,7 +141,7 @@ export default function Home() {
         </section>
 
         <section className="app-card px-4 py-5 sm:px-6 sm:py-6">
-          <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_18rem] lg:items-start">
+          <div className="home-card-layout grid gap-5 lg:grid-cols-[minmax(0,1fr)_18rem] lg:items-start">
             <div className="space-y-4">
               <p className="app-kicker">{isAuthenticated ? 'Für dich' : 'Neu hier?'}</p>
               <h2 className="text-2xl font-semibold tracking-tight text-slate-950 sm:text-3xl">
