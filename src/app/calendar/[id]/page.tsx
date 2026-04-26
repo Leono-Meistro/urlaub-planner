@@ -391,20 +391,25 @@ function NamePickerModal({
   loading,
   selectedUser,
   existingUsers,
+  canManage,
   onClose,
   onSelect,
+  onDeleteUser,
 }: {
   loading: boolean;
   selectedUser: string | null;
   existingUsers: NameOption[];
+  canManage: boolean;
   onClose: () => void;
   onSelect: (name: string) => Promise<void>;
+  onDeleteUser: (user: NameOption) => Promise<void>;
 }) {
   const [newName, setNewName] = useState('');
   const [query, setQuery] = useState('');
   const [error, setError] = useState('');
   const [savingName, setSavingName] = useState(false);
-  const isBusy = loading || savingName;
+  const [deletingUserId, setDeletingUserId] = useState<number | null>(null);
+  const isBusy = loading || savingName || deletingUserId !== null;
 
   useEffect(() => {
     if (!error) {
@@ -440,6 +445,28 @@ function NamePickerModal({
       setError(err instanceof Error ? err.message : 'Name konnte nicht ausgewählt werden.');
     } finally {
       setSavingName(false);
+    }
+  };
+
+  const handleDeleteUser = async (user: NameOption) => {
+    const confirmed = window.confirm(
+      `Soll ${user.name} wirklich gelöscht werden? Dadurch werden auch alle gespeicherten Tage dieses Users gelöscht.`
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    setError('');
+    setDeletingUserId(user.id);
+
+    try {
+      await onDeleteUser(user);
+    } catch (err) {
+      console.error(err);
+      setError(err instanceof Error ? err.message : 'User konnte nicht gelöscht werden.');
+    } finally {
+      setDeletingUserId(null);
     }
   };
 
@@ -519,27 +546,47 @@ function NamePickerModal({
 
               <div className="mt-4 grid max-h-[28rem] gap-2 overflow-y-auto pr-1">
                 {filteredUsers.length > 0 ? filteredUsers.map((user) => (
-                  <button
+                  <div
                     key={user.id}
-                    type="button"
-                    disabled={isBusy}
-                    onClick={() => handleExistingUser(user.name)}
-                    className={`flex items-center justify-between rounded-2xl border px-4 py-3 text-left transition-colors ${
+                    className={`flex items-center justify-between gap-2 rounded-2xl border px-4 py-3 text-left transition-colors ${
                       user.name === selectedUser
                         ? 'border-emerald-500 bg-emerald-50 text-slate-900 ring-1 ring-emerald-200'
                         : 'border-slate-200 bg-white text-slate-900 hover:border-blue-300 hover:bg-blue-50'
                     }`}
                   >
-                    <div className="min-w-0">
+                    <button
+                      type="button"
+                      disabled={isBusy}
+                      onClick={() => handleExistingUser(user.name)}
+                      className="min-w-0 flex-1 text-left disabled:cursor-not-allowed disabled:opacity-60"
+                    >
                       <p className="truncate font-semibold">{user.name}</p>
                       {user.savedDays > 0 && (
                         <p className="mt-0.5 text-xs text-slate-500">
                           {user.savedDays} Tag{user.savedDays === 1 ? '' : 'e'} gespeichert
                         </p>
                       )}
+                    </button>
+
+                    <div className="flex shrink-0 items-center gap-2">
+                      {user.name === selectedUser && <Check size={18} className="text-emerald-600" />}
+                      {canManage && (
+                        <button
+                          type="button"
+                          disabled={isBusy}
+                          onClick={() => handleDeleteUser(user)}
+                          aria-label={`${user.name} löschen`}
+                          className="inline-flex h-9 w-9 items-center justify-center rounded-xl text-slate-400 transition-colors hover:bg-red-50 hover:text-red-600 disabled:cursor-not-allowed disabled:opacity-50"
+                        >
+                          {deletingUserId === user.id ? (
+                            <span className="h-4 w-4 animate-spin rounded-full border-2 border-slate-200 border-t-red-600" />
+                          ) : (
+                            <Trash2 size={16} />
+                          )}
+                        </button>
+                      )}
                     </div>
-                    {user.name === selectedUser && <Check size={18} className="ml-2 shrink-0 text-emerald-600" />}
-                  </button>
+                  </div>
                 )) : (
                   query && (
                     <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-4 py-6 text-center text-sm text-slate-500">
@@ -1360,6 +1407,36 @@ export default function CalendarView() {
     }
   };
 
+  const handleDeleteUser = async (user: NameOption) => {
+    if (!permissions.canManage) {
+      throw new Error('Nur Admins können User löschen.');
+    }
+
+    const response = await fetch(`/api/calendars/${calendarId}/users?userId=${user.id}`, {
+      method: 'DELETE',
+    });
+
+    const data = await response.json().catch(() => ({}));
+
+    if (!response.ok) {
+      throw new Error(data.error || 'User konnte nicht gelöscht werden.');
+    }
+
+    if (selectedUser?.toLowerCase() === user.name.toLowerCase()) {
+      setSelectedUser(null);
+      setSelectedDates([]);
+      setPendingDeleteDates([]);
+      setNameModalOpen(true);
+
+      if (typeof window !== 'undefined') {
+        window.localStorage.removeItem(nameStorageKey);
+      }
+    }
+
+    setSuccessMessage(`${user.name} wurde gelöscht.`);
+    await fetchCalendarData(selectedUser);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     clearMessages();
@@ -2165,7 +2242,7 @@ export default function CalendarView() {
                       <div className="min-w-0">
                         <p className="truncate text-sm font-semibold text-slate-950">{user.name}</p>
                         <p className="text-xs text-slate-500">
-                          {mergedAvailabilityByUser.get(user.id)?.length ?? 0} Tag{(mergedAvailabilityByUser.get(user.id)?.length ?? 0) === 1 ? '' : 'e'}
+                          {ranges.reduce((totalDays, range) => totalDays + range.spanDays, 0)} Tag{ranges.reduce((totalDays, range) => totalDays + range.spanDays, 0) === 1 ? '' : 'e'}
                         </p>
                       </div>
                     </div>
@@ -2229,11 +2306,13 @@ export default function CalendarView() {
 
         {nameModalOpen && (
           <NamePickerModal
-            loading={submitting}
+            loading={loading}
             selectedUser={selectedUser}
             existingUsers={existingUserOptions}
+            canManage={permissions.canManage}
             onClose={() => setNameModalOpen(false)}
             onSelect={handleUserSelection}
+            onDeleteUser={handleDeleteUser}
           />
         )}
 

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import {
   createCalendarUser,
+  deleteCalendarUser,
   getCalendar,
   getCalendarOwnerId,
   getCalendarUsers,
@@ -87,5 +88,42 @@ export async function POST(
   } catch (error) {
     console.error(error);
     return NextResponse.json({ error: 'Nutzer konnte nicht angelegt werden' }, { status: 500 });
+  }
+}
+
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const { id } = await params;
+    const calendar = getCalendar(id);
+
+    if (!calendar) {
+      return NextResponse.json({ error: 'Urlaub nicht gefunden' }, { status: 404 });
+    }
+
+    const access = await requireCalendarManager(id);
+    if ('error' in access) {
+      return access.error;
+    }
+
+    const { searchParams } = new URL(request.url);
+    const userIdParam = searchParams.get('userId');
+    const userId = userIdParam ? Number(userIdParam) : NaN;
+
+    if (!Number.isInteger(userId)) {
+      return NextResponse.json({ error: 'Ungültige Nutzer-ID' }, { status: 400 });
+    }
+
+    const deletedUser = deleteCalendarUser(id, userId);
+    if (!deletedUser) {
+      return NextResponse.json({ error: 'Nutzer nicht gefunden' }, { status: 404 });
+    }
+
+    return NextResponse.json({ success: true, user: deletedUser });
+  } catch (error) {
+    console.error(error);
+    return NextResponse.json({ error: 'Nutzer konnte nicht gelöscht werden' }, { status: 500 });
   }
 }

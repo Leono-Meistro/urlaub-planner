@@ -755,3 +755,18 @@ export function createCalendarUser(calendarId: string, name: string): User | nul
     createdAt,
   };
 }
+
+
+export function deleteCalendarUser(calendarId: string, userId: number): boolean {
+  const db = getDatabase();
+  
+  // Delete availability records for this user
+  const deleteAvailStmt = db.prepare('DELETE FROM availability WHERE calendarId = ? AND userId = ?');
+  deleteAvailStmt.run(calendarId, userId);
+  
+  // Delete user
+  const deleteUserStmt = db.prepare('DELETE FROM users WHERE calendarId = ? AND id = ?');
+  const result = deleteUserStmt.run(calendarId, userId);
+  
+  return result.changes > 0;
+}

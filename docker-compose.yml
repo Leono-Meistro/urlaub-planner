@@ -8,7 +8,7 @@ services:
       - "3000:3000"
     environment:
       - NODE_ENV=production
-      - JWT_SECRET=${ secrets.JWT_SECRET }
+      - JWT_SECRET=${JWT_SECRET}
     volumes:
       - urlaub_data:/app/data
     restart: unless-stopped
