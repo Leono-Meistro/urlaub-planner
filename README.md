@@ -1,36 +1,131 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Urlaubsplanung
 
-## Getting Started
+Eine intuitive Mobile-First Web-Anwendung zur gemeinsamen Urlaubsplanung. Administratoren können Kalender erstellen, und Benutzer können ihre Verfügbarkeit eintragen.
 
-First, run the development server:
+## Features
 
+- 📅 Admin-Panel zum Erstellen von Urlaubskalendern
+- 👥 Benutzer können ihre Verfügbarkeit markieren
+- 📊 Übersichtliche Darstellung der Verfügbarkeit aller Teilnehmer
+- 📱 Optimiert für Smartphones und Tablets (Mobile-First)
+- 🎨 Modernes, responsives Design mit Tailwind CSS
+- ⚡ Schnell und zuverlässig mit Next.js
+
+## Tech Stack
+
+- **Frontend**: React, Next.js 16+, Tailwind CSS
+- **Backend**: Next.js API Routes
+- **Database**: SQLite (better-sqlite3)
+- **UI Components**: Lucide Icons
+
+## Installation
+
+1. **Abhängigkeiten installieren**:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. **Umgebungsvariablen einrichten**:
+Kopieren Sie `.env.example` zu `.env.local` und setzen Sie einen Admin-Code:
+```bash
+cp .env.example .env.local
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Bearbeiten Sie `.env.local`:
+```
+NEXT_PUBLIC_ADMIN_CODE=IhrAdmin123Code
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+3. **Entwicklungsserver starten**:
+```bash
+npm run dev
+```
 
-## Learn More
+Die Anwendung läuft auf `http://localhost:3000`
 
-To learn more about Next.js, take a look at the following resources:
+## Verwendung
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Admin - Kalender erstellen
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+1. Navigieren Sie zur Startseite (`/`)
+2. Klicken Sie auf das "Neu" Button oben rechts
+3. Füllen Sie die erforderlichen Informationen aus:
+   - **Titel**: Name des Urlaubs (z.B. "Sommerurlaub 2025")
+   - **Beschreibung** (optional): Weitere Informationen
+   - **Startdatum**: Erster Tag des Urlaubs
+   - **Enddatum**: Letzter Tag des Urlaubs
+   - **Admin-Code**: Der in `.env.local` festgelegte Code
+4. Klicken Sie auf "Kalender erstellen"
 
-## Deploy on Vercel
+### Benutzer - Verfügbarkeit eintragen
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+1. Wählen Sie einen Kalender von der Startseite aus
+2. Geben Sie Ihren Namen ein
+3. Klicken Sie auf die Tage, an denen Sie verfügbar sind (die Tage werden grün)
+4. Klicken Sie auf "Verfügbarkeit speichern"
+5. Sehen Sie Ihre Verfügbarkeit in der Übersichtstabelle unten
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Struktur
+
+```
+src/
+├── app/
+│   ├── api/
+│   │   └── calendars/
+│   │       ├── route.ts          # Kalender CRUD-Operationen
+│   │       └── [id]/
+│   │           └── route.ts      # Verfügbarkeit aktualisieren
+│   ├── admin/
+│   │   └── create/
+│   │       └── page.tsx          # Admin-Seite zum Erstellen von Kalendern
+│   ├── calendar/
+│   │   └── [id]/
+│   │       └── page.tsx          # Kalender-Ansicht für Benutzer
+│   ├── layout.tsx                # Hauptlayout
+│   ├── page.tsx                  # Startseite mit Kalender-Übersicht
+│   └── globals.css               # Globale Styles
+├── lib/
+│   └── db.ts                     # Datenbank-Funktionen und Schnittstellen
+└── ...
+```
+
+## Datenbank
+
+Die Anwendung verwendet SQLite für die Datenspeicherung. Die Datenbank wird automatisch initialisiert.
+
+### Tabellen
+
+- **calendars**: Speichert Kalender-Informationen
+  - id, title, description, startDate, endDate, createdAt, adminCode
+
+- **availability**: Speichert Benutzer-Verfügbarkeit
+  - id, calendarId, userName, date, available, createdAt
+
+## Bereitstellung
+
+### Vercel (empfohlen)
+
+1. Push Sie Ihren Code zu GitHub
+2. Verbinden Sie Ihr Repository mit Vercel
+3. Stellen Sie Umgebungsvariablen ein (NEXT_PUBLIC_ADMIN_CODE)
+4. Stellen Sie bereit!
+
+Hinweis: Vercel hat ein Dateisystem-Limit für bezahlte Pläne. Für produktive Nutzung mit vielen Benutzern erwägen Sie, SQLite durch PostgreSQL zu ersetzen.
+
+## Sicherheit
+
+- Der Admin-Code wird in `.env.local` gespeichert (wird nicht in Git gespeichert)
+- Benutzerdaten werden lokal in der SQLite-Datenbank gespeichert
+- Keine Authentifizierung erforderlich (idealerweise durch einen eindeutigen Kalender-Link geschützt)
+
+## Mobile-First Design
+
+Die App ist mit mobilen Geräten im Fokus entworfen:
+- Touch-optimierte Buttons (mindestens 44x44px)
+- Große, lesbare Schrift
+- Einfache Navigation mit minimalem Tippen
+- Responsive Grid-Layout für verschiedene Bildschirmgrößen
+
+## Lizenz
+
+MIT
