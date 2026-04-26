@@ -1530,17 +1530,15 @@ export default function CalendarView() {
   const timelineDates = Array.from({ length: totalCalendarDays }, (_, index) => (
     addDays(calendar.startDate, index)
   ));
-  const timelineFirstMondayIndex = Math.max(
-    0,
-    timelineDates.findIndex((dateKey) => fromDateKey(dateKey).getDay() === 1)
-  );
+  const timelineStartWeekday = fromDateKey(calendar.startDate).getDay();
+  const timelineMondayOffsetDays = (timelineStartWeekday + 6) % 7;
   const timelineGridStyle = {
     backgroundImage: [
       'linear-gradient(to right, rgba(148, 163, 184, 0.2) 1px, transparent 1px)',
       'linear-gradient(to right, rgba(15, 23, 42, 0.08) 1px, transparent 1px)',
     ].join(', '),
     backgroundSize: `${timelineDayWidth}px 100%, ${timelineDayWidth * 7}px 100%`,
-    backgroundPosition: `0 0, ${timelineFirstMondayIndex * timelineDayWidth}px 0`,
+    backgroundPosition: `0 0, ${-timelineMondayOffsetDays * timelineDayWidth}px 0`,
   };
   const timelineMonthSegments = timelineDates.reduce<{
     key: string;
@@ -1581,6 +1579,7 @@ export default function CalendarView() {
     0,
     ...timelineDates.map((dateKey) => availabilityCountByDate.get(dateKey) ?? 0)
   );
+  const allParticipantsAvailableMin = users.length >= 2 ? users.length : Number.POSITIVE_INFINITY;
   const summaryAvailabilityBlocks = timelineDates
     .reduce<{
       id: string;
@@ -1590,6 +1589,7 @@ export default function CalendarView() {
       spanDays: number;
       count: number;
       opacity: number;
+      isAllParticipants: boolean;
     }[]>((blocks, dateKey, index) => {
       const count = availabilityCountByDate.get(dateKey) ?? 0;
 
@@ -1598,9 +1598,14 @@ export default function CalendarView() {
       }
 
       const opacity = 0.18 + (count / Math.max(maxAvailableCount, 1)) * 0.62;
+      const isAllParticipants = count >= allParticipantsAvailableMin;
       const lastBlock = blocks.at(-1);
 
-      if (lastBlock?.count === count && lastBlock.startIndex + lastBlock.spanDays === index) {
+      if (
+        lastBlock?.count === count
+        && lastBlock.isAllParticipants === isAllParticipants
+        && lastBlock.startIndex + lastBlock.spanDays === index
+      ) {
         lastBlock.endDate = dateKey;
         lastBlock.spanDays += 1;
         return blocks;
@@ -1614,6 +1619,7 @@ export default function CalendarView() {
         spanDays: 1,
         count,
         opacity,
+        isAllParticipants,
       });
 
       return blocks;
@@ -2133,7 +2139,12 @@ export default function CalendarView() {
                           style={{
                             left: block.startIndex * timelineDayWidth,
                             width: block.spanDays * timelineDayWidth,
-                            backgroundColor: `rgba(22, 163, 74, ${block.opacity})`,
+                            backgroundColor: block.isAllParticipants
+                              ? 'rgba(22, 163, 74, 0.92)'
+                              : `rgba(22, 163, 74, ${block.opacity})`,
+                            boxShadow: block.isAllParticipants
+                              ? '0 0 0 1px rgba(22,163,74,0.85), 0 10px 18px -12px rgba(22,163,74,0.8)'
+                              : undefined,
                           }}
                         />
                       );

@@ -1,0 +1,17 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: urlaub-planner
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - JWT_SECRET=${ secrets.JWT_SECRET }
+    volumes:
+      - urlaub_data:/app/data
+    restart: unless-stopped
+
+volumes:
+  urlaub_data:
